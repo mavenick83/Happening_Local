@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happening Local - Scopri cosa accade vicino a te</title>
+    <style>
+        body {
+            font-family: 'Trebuchet MS', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+            color: #333;
+        }
+
+        header { background: linear-gradient(90deg, #FF7F50, #FFD700, #87CEEB); color: white; text-align: center; padding: 60px 0; font-size: 5em; position: relative;
+        }
+
+        header img { position: absolute; top: 50%; left: 20px; transform: translateY(-50%); height: 80px;
+        }
+
+        header .logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 60px;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter.distance {
+            flex: 0.6;
+            min-width: 140px;
+        }
+
+        .filter label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #0056b3;
+        }
+
+        .filter select, .filter input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #0056b3;
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: #ffffff;
+        }
+
+        .event-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .event {
+            background: linear-gradient(135deg, #FFD700, #87CEEB);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .event:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .event h3 {
+            margin-top: 0;
+            color: #FF4500;
+            font-size: 1.2em;
+        }
+
+        .event img {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            object-fit: cover;
+            border: 2px solid #FF4500;
+        }
+
+        .event p {
+            margin: 5px 0;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .cta {
+            background: linear-gradient(90deg, #FF4500, #FFA500);
+            color: white;
+            text-align: center;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .cta:hover {
+            background: linear-gradient(90deg, #FFA500, #FF4500);
+        }
+
+        .no-events {
+            text-align: center;
+            font-size: 1.4em;
+            color: #0056b3;
+            margin-top: 20px;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+            z-index: 1000;
+            display: none;
+        }
+
+        .popup h3 {
+            margin-top: 0;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .popup button {
+            background: #FF4500;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .popup button:hover {
+            background: #FFA500;
+        }
+    </style>
+</head>
+<body>
+    <header>
+    <h1 style="color: white; font-size: 1.25em; margin: 0;">Happening Local</h1>
+    <p style="color: white; font-size: 0.6em; margin: 0;">Eventi vicino a te</p>
+</header>
+    <main>
+        <div class="filter-container">
+            <div class="filter">
+                <label for="location">Filtra per località:</label>
+                <select id="location">
+                    <option value="">Tutte le località</option>
+                </select>
+            </div>
+            <div class="filter">
+                <label for="date">Filtra per data:</label>
+                <input type="date" id="date">
+            </div>
+            <div class="filter distance">
+                <label for="distance">Distanza (km):</label>
+                <select id="distance">
+                    <option value="">Tutte le distanze</option>
+                    <option value="10">10 km</option>
+                    <option value="20">20 km</option>
+                    <option value="30">30 km</option>
+                    <option value="40">40 km</option>
+                    <option value="50">50 km</option>
+                </select>
+            </div>
+            <div class="filter">
+                <label for="eventType">Tipo di evento:</label>
+                <select id="eventType">
+    <option value="">Tutti i tipi</option>
+    <option value="concerti">Concerti</option>
+    <option value="festival">Festival</option>
+    <option value="serate">Serate</option>
+    <option value="spettacoli">Spettacoli</option>
+</select>
+            </div>
+        </div>
+
+        <div class="event-list" id="eventList">
+            <!-- Gli eventi saranno generati dinamicamente qui -->
+        </div>
+
+        <div class="popup-overlay" id="popupOverlay"></div>
+        <div class="popup" id="popup">
+            <h3 id="popupTitle"></h3>
+            <p id="popupDescription"></p>
+            <button onclick="closePopup()">Chiudi</button>
+        </div>
+    </main>
+
+    <script>
+        let allEvents = [];
+        let userLocation = null;
+
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude
+                    };
+                }, error => {
+                    console.error('Errore nella geolocalizzazione:', error);
+                });
+            } else {
+                console.error('La geolocalizzazione non è supportata dal browser.');
+            }
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        async function fetchEvents() {
+            const sheetId = '1g5TEH7qVrxHNIMFynoCSXKTEToaBj6esXqKqSIL3E8E';
+            const apiKey = 'AIzaSyAAZvqKnxv07a0XBt-Doy-KBBGthJ9Wcnw';
+            const range = 'Sheet1!A2:I';
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const rows = data.values;
+
+                if (!rows) {
+                    renderEvents([]);
+                    return;
+                }
+
+                console.log('Rows retrieved from Google Sheets:', rows);
+
+                const locations = new Set();
+                allEvents = rows.map(row => {
+                    locations.add(row[1]);
+                    return {
+                        title: row[0],
+                        location: row[1],
+                        date: row[2],
+                        description: row[3],
+                        venue: row[4],
+                        address: row[5],
+                        image: row[6],
+                        eventType: row[8],
+                        coordinates: row[7] ? row[7].split(',').map(coord => parseFloat(coord)) : null
+                    };
+                });
+
+                allEvents.sort((a, b) => {
+                    const dateA = new Date(b.date.split('/').reverse().join('-'));
+                    const dateB = new Date(a.date.split('/').reverse().join('-'));
+                    return dateA - dateB;
+                });
+
+                populateLocationFilter(locations);
+                renderEvents(allEvents);
+            } catch (error) {
+                console.error('Errore nel caricamento degli eventi:', error);
+                renderEvents([]);
+            }
+        }
+
+        function populateLocationFilter(locations) {
+            const locationSelect = document.getElementById('location');
+            locations.forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                locationSelect.appendChild(option);
+            });
+        }
+
+        function renderEvents(filteredEvents) {
+            const eventList = document.getElementById('eventList');
+            eventList.innerHTML = '';
+
+            if (filteredEvents.length === 0) {
+                eventList.innerHTML = '<p class="no-events">Nessun evento trovato.</p>';
+                return;
+            }
+
+            filteredEvents.forEach(event => {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'event';
+                eventElement.innerHTML = `
+                    <img src="${event.image}" alt="${event.title}">
+                    <h3>${event.title}</h3>
+                    <p><strong>Località:</strong> ${event.location}</p>
+                    <p><strong>Data:</strong> ${event.date}</p>
+                    <p><strong>Luogo:</strong> ${event.venue}</p>
+                    <p><strong>Indirizzo:</strong> ${event.address}</p>
+                    
+                    <button class="cta" onclick="showPopup('${event.title}', \`${event.description}\`)">Scopri di più</button>
+                `;
+                eventList.appendChild(eventElement);
+            });
+        }
+
+        function showPopup(title, description) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popupOverlay');
+            document.getElementById('popupTitle').textContent = title;
+            document.getElementById('popupDescription').textContent = description;
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popupOverlay');
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        function filterEvents() {
+            const locationFilter = document.getElementById('location').value.toLowerCase();
+            const dateFilter = document.getElementById('date').value;
+            const distanceFilter = parseFloat(document.getElementById('distance').value);
+            const eventTypeFilter = document.getElementById('eventType').value.toLowerCase();
+
+            const filteredEvents = allEvents.filter(event => {
+                const matchesLocation = locationFilter ? event.location.toLowerCase() === locationFilter : true;
+                const matchesDate = dateFilter ? event.date === dateFilter.split('-').reverse().join('/') : true;
+                const matchesEventType = eventTypeFilter ? event.eventType.toLowerCase() === eventTypeFilter : true;
+
+                let matchesDistance = true;
+                if (userLocation && distanceFilter && event.coordinates) {
+                    const distance = calculateDistance(
+                        userLocation.lat, userLocation.lon,
+                        event.coordinates[0], event.coordinates[1]
+                    );
+                    matchesDistance = distance <= distanceFilter;
+                }
+
+                return matchesLocation && matchesDate && matchesEventType && matchesDistance;
+            });
+
+            renderEvents(filteredEvents);
+        }
+
+        document.getElementById('location').addEventListener('change', filterEvents);
+        document.getElementById('date').addEventListener('input', filterEvents);
+        document.getElementById('distance').addEventListener('change', filterEvents);
+        document.getElementById('eventType').addEventListener('change', filterEvents);
+
+        getUserLocation();
+        fetchEvents();
+    </script>
+</body>
+</html>
+
+
+
