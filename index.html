@@ -13,13 +13,48 @@
             color: #333;
         }
 
-        header { background: linear-gradient(90deg, #FF7F50, #FFD700, #87CEEB); color: white; text-align: center; padding: 60px 0; font-size: 5em; position: relative;
+        header {
+            background: linear-gradient(90deg, #FF7F50, #FFD700, #87CEEB);
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+            font-size: 5em;
+            position: relative;
         }
 
-        header img { position: absolute; top: 50%; left: 20px; transform: translateY(-50%); height: 80px;
+        header img {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            height: 80px;
         }
 
-        header .logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 60px;
+        header .logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 60px;
+        }
+
+        nav {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
         }
 
         main {
@@ -174,9 +209,15 @@
 </head>
 <body>
     <header>
-    <h1 style="color: white; font-size: 1.25em; margin: 0;">Happening Local</h1>
-    <p style="color: white; font-size: 0.6em; margin: 0;">Eventi vicino a te</p>
-</header>
+        <h1 style="color: white; font-size: 1.25em; margin: 0;">Happening Local</h1>
+        <p style="color: white; font-size: 0.6em; margin: 0;">Eventi vicino a te</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="chi-siamo.html">Chi siamo</a>
+        <a href="eventi.html">Eventi</a>
+        <a href="contatti.html">Contatti</a>
+    </nav>
     <main>
         <div class="filter-container">
             <div class="filter">
@@ -203,12 +244,12 @@
             <div class="filter">
                 <label for="eventType">Tipo di evento:</label>
                 <select id="eventType">
-    <option value="">Tutti i tipi</option>
-    <option value="concerti">Concerti</option>
-    <option value="festival">Festival</option>
-    <option value="serate">Serate</option>
-    <option value="spettacoli">Spettacoli</option>
-</select>
+                    <option value="">Tutti i tipi</option>
+                    <option value="concerti">Concerti</option>
+                    <option value="festival">Festival</option>
+                    <option value="serate">Serate</option>
+                    <option value="spettacoli">Spettacoli</option>
+                </select>
             </div>
         </div>
 
@@ -391,6 +432,3 @@
     </script>
 </body>
 </html>
-
-
-
